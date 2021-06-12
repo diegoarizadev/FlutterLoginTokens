@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:patronbloc/src/bloc/login_bloc.dart';
 import 'package:patronbloc/src/bloc/provider.dart';
 
-class LoginPage extends StatelessWidget {
+class RegisterPage extends StatelessWidget {
   //const LoginPage({Key key}) : super(key: key);
 
   @override
@@ -132,7 +132,7 @@ class LoginPage extends StatelessWidget {
             child: Column(
               children: [
                 Text(
-                  'Ingreso',
+                  'Crear una cuenta',
                   style: TextStyle(
                     fontSize: 20.0,
                     fontWeight: FontWeight.bold,
@@ -157,9 +157,8 @@ class LoginPage extends StatelessWidget {
             ),
           ),
           TextButton(
-            onPressed: () =>
-                Navigator.pushReplacementNamed(context, 'register'),
-            child: Text('Crear una nueva cuenta'),
+            onPressed: () => Navigator.pushReplacementNamed(context, 'login'),
+            child: Text('Ya tienes una cuenta? Login'),
           ),
           SizedBox(
             height: 100.0,
@@ -240,7 +239,7 @@ class LoginPage extends StatelessWidget {
                 horizontal: 80.0,
                 vertical: 10.0,
               ),
-              child: Text('Ingresar'),
+              child: Text('Login'),
             ),
             style: ElevatedButton.styleFrom(
               primary: Colors.deepPurple,
