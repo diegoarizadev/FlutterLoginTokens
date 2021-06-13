@@ -29,8 +29,16 @@ class UserProvider {
     http.Response response =
         await http.post(_uriS, body: json.encode(authData));
 
-    final decodedData = json.decode(response.body);
+    Map<String, dynamic> decodedData = json.decode(response.body);
 
     print(decodedData);
+
+    if (decodedData.containsKey('idToken')) {
+      //TODO Almacenar el token en el storage
+      return {'ok': true, 'token': decodedData['idToken']};
+    } else {
+      //Error
+      return {'ok': false, 'token': decodedData['error']['message     ']};
+    }
   }
 }
