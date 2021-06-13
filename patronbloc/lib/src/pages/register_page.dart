@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:patronbloc/src/bloc/login_bloc.dart';
 import 'package:patronbloc/src/bloc/provider.dart';
+import 'package:patronbloc/src/providers/user_provider.dart';
 
 class RegisterPage extends StatelessWidget {
   //const LoginPage({Key key}) : super(key: key);
+
+  final userProvider = new UserProvider();
 
   @override
   Widget build(BuildContext context) {
@@ -231,8 +234,7 @@ class RegisterPage extends StatelessWidget {
         builder: (BuildContext context, AsyncSnapshot snapshot) {
           return ElevatedButton(
             onPressed: snapshot.hasData
-                ? () => _obtenerUltimoValorStream(
-                    bloc, context) //Era una función anonima🧐
+                ? () => _register(bloc, context) //Era una función anonima🧐
                 : null, //si el snapshot tiene información, se invoca la funcion anonima normalmente,. de lo contrario null
             child: Container(
               padding: EdgeInsets.symmetric(
@@ -252,12 +254,10 @@ class RegisterPage extends StatelessWidget {
         });
   }
 
-  _obtenerUltimoValorStream(LoginBloc bloc, BuildContext context) {
-    print(' -> Contraseña : ${bloc.password}');
-    print(' -> Email : ${bloc.email}');
+  _register(LoginBloc bloc, BuildContext context) {
+    userProvider.newUser(bloc.email, bloc.password);
 
     //redireccionar a otra pagina.
-    Navigator.pushReplacementNamed(context,
-        'home'); //pushReplacementNamed: lo redirecciona como un nuevo Root
+    //Navigator.pushReplacementNamed(context,'home'); //pushReplacementNamed: lo redirecciona como un nuevo Root
   }
 }
