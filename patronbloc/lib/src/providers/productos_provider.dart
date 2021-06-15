@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:http_parser/http_parser.dart';
+import 'package:patronbloc/src/Preferences/preferences_users.dart';
 import 'package:patronbloc/src/models/product_model.dart';
 import 'package:http/http.dart' as http;
 import 'package:mime_type/mime_type.dart';
@@ -14,9 +15,13 @@ class ProductsProvider {
   final String _uploadPreset = '';
   final String _cloudName = '';
 
+  final _prefs =
+      new PreferencesUsers(); //Singleton, siempre será la misma instancia.
+
 //Insertar Productos.
   Future<bool> createProduct(ProductModel product) async {
-    final _uriS = Uri.https(_urlFirebase, 'productos.json');
+    final _uriS =
+        Uri.https(_urlFirebase, 'productos.json?auth=${_prefs.token}');
 
     http.Response response = await http.post(_uriS,
         //headers: {"Content-Type": "application/json"},
@@ -30,7 +35,10 @@ class ProductsProvider {
   }
 
   Future<List<ProductModel>> loadProducts() async {
-    final _uriS = Uri.https(_urlFirebase, 'productos.json');
+    final _uriS =
+        Uri.https(_urlFirebase, 'productos.json', {'auth': _prefs.token});
+
+    print('loadProducts - _uriS : $_uriS');
 
     http.Response response = await http.get(_uriS); //retorna un future
 
@@ -66,7 +74,8 @@ class ProductsProvider {
 
   Future<int> deleteProducts(String? idProduct) async {
     //Eliminar Producto.
-    final _uriS = Uri.https(_urlFirebase, '/productos/$idProduct.json');
+    final _uriS = Uri.https(
+        _urlFirebase, '/productos/$idProduct.json', {'auth': _prefs.token});
     //print(_uriS);
 
     http.Response response = await http.delete(_uriS); //retorna un future
@@ -77,7 +86,8 @@ class ProductsProvider {
   }
 
   Future<bool> editProduct(ProductModel product) async {
-    final _uriS = Uri.https(_urlFirebase, '/productos/${product.id}.json');
+    final _uriS = Uri.https(
+        _urlFirebase, '/productos/${product.id}.json', {'auth': _prefs.token});
 
     http.Response response = await http.put(_uriS,
         //headers: {"Content-Type": "application/json"},
