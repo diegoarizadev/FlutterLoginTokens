@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:patronbloc/src/bloc/login_bloc.dart';
 import 'package:patronbloc/src/bloc/provider.dart';
 import 'package:patronbloc/src/providers/user_provider.dart';
+import 'package:patronbloc/src/utils/utils.dart';
 
 class RegisterPage extends StatelessWidget {
   //const LoginPage({Key key}) : super(key: key);
@@ -241,7 +242,7 @@ class RegisterPage extends StatelessWidget {
                 horizontal: 80.0,
                 vertical: 10.0,
               ),
-              child: Text('Login'),
+              child: Text('Crear Cuenta'),
             ),
             style: ElevatedButton.styleFrom(
               primary: Colors.deepPurple,
@@ -254,10 +255,16 @@ class RegisterPage extends StatelessWidget {
         });
   }
 
-  _register(LoginBloc bloc, BuildContext context) {
+  _register(LoginBloc bloc, BuildContext context) async {
     userProvider.newUser(bloc.email, bloc.password);
+    Map data = await userProvider.newUser(bloc.email,
+        bloc.password); //El await es para esperara que se realice la validaición,
 
-    //redireccionar a otra pagina.
-    //Navigator.pushReplacementNamed(context,'home'); //pushReplacementNamed: lo redirecciona como un nuevo Root
+    if (data['ok']) {
+      Navigator.pushReplacementNamed(context,
+          'home'); //pushReplacementNamed: lo redirecciona como un nuevo Root
+    } else {
+      seeAlert(context, data['token']);
+    }
   }
 }

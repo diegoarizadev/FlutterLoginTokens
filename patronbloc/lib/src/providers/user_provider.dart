@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
+import 'package:patronbloc/src/Preferences/preferences_users.dart';
 
 class UserProvider {
   //Petición para FireBase
@@ -12,6 +13,9 @@ class UserProvider {
 
   String _pathSignIn =
       'v1/accounts:signInWithPassword'; //v1/accounts:signInWithPassword?key=[API_KEY]
+
+  final _prefs =
+      new PreferencesUsers(); //Singleton, siempre será la misma instancia.
 
   Future<Map<String, dynamic>> newUser(String email, String password) async {
     final authData = {
@@ -34,10 +38,11 @@ class UserProvider {
 
     Map<String, dynamic> decodedData = json.decode(response.body);
 
-    print(decodedData);
+    print('newUser - $decodedData');
 
     if (decodedData.containsKey('idToken')) {
-      //TODO Almacenar el token en el storage
+      _prefs.token = decodedData[
+          'idToken']; //Se almacena el valor en las preferencias del dispositivo.
       return {'ok': true, 'token': decodedData['idToken']};
     } else {
       //Error
@@ -69,7 +74,8 @@ class UserProvider {
     Map<String, dynamic> decodedData = json.decode(response.body);
 
     if (decodedData.containsKey('idToken')) {
-      //TODO Almacenar el token en el storage
+      _prefs.token = decodedData[
+          'idToken']; //Se almacena el valor en las preferencias del dispositivo.
       return {'ok': true, 'token': decodedData['idToken']};
     } else {
       //Error

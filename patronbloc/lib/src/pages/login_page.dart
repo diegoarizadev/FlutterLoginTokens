@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:patronbloc/src/bloc/login_bloc.dart';
 import 'package:patronbloc/src/bloc/provider.dart';
 import 'package:patronbloc/src/providers/user_provider.dart';
+import 'package:patronbloc/src/utils/utils.dart';
 
 class LoginPage extends StatelessWidget {
   //const LoginPage({Key key}) : super(key: key);
@@ -254,9 +255,14 @@ class LoginPage extends StatelessWidget {
         });
   }
 
-  _login(LoginBloc bloc, BuildContext context) {
-    var temp = userProvider.login(bloc.email, bloc.password);
+  _login(LoginBloc bloc, BuildContext context) async {
+    Map data = await userProvider.login(bloc.email,
+        bloc.password); //El await es para esperara que se realice la validaición,
 
-    //print('_login : ${temp.toString()}');
+    if (data['ok']) {
+      Navigator.pushReplacementNamed(context, 'home');
+    } else {
+      seeAlert(context, data['token']);
+    }
   }
 }
