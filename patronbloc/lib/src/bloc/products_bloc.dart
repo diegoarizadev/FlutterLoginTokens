@@ -64,7 +64,7 @@ class ProductsBloc {
 
   dispose() {
     _productosLoadController
-        ?.close(); // el ? dice : si _productosLoadController existe, cerrar.
-    _productosController?.close();
+        .close(); // el ? dice : si _productosLoadController existe, cerrar.
+    _productosController.close();
   }
 }

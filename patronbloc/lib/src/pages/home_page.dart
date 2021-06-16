@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:patronbloc/src/bloc/provider.dart';
 import 'package:patronbloc/src/models/product_model.dart';
 import 'package:patronbloc/src/providers/productos_provider.dart';
-//import 'package:patronbloc/src/bloc/provider.dart';
 
 class HomePage extends StatefulWidget {
   //const HomePage({Key key}) : super(key: key);
@@ -10,17 +10,18 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  final productoProvider = new ProductsProvider();
+  //final productoProvider = new ProductsProvider();
 
   @override
   Widget build(BuildContext context) {
-    //final bloc = ProviderInheritedWidget.of(context);
+    final productsBloc = ProviderInheritedWidget.productBloc(context);
+    productsBloc.loadProducts(); //Cargar productos.
 
     return Scaffold(
       appBar: AppBar(
         title: Text('Home'),
       ),
-      body: _createListProduct(),
+      body: _createListProduct(productsBloc),
       floatingActionButton: _createButton(context),
     );
   }
@@ -36,20 +37,19 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  _createListProduct() {
-    return FutureBuilder(
-      future: productoProvider.loadProducts(),
+  _createListProduct(ProductsBloc productsBloc) {
+    return StreamBuilder(
+      stream: productsBloc.productsStream,
       builder:
           (BuildContext context, AsyncSnapshot<List<ProductModel>> snapshot) {
         if (snapshot.hasData) {
           //Se valida si hay información
-
           final products = snapshot.data;
 
           return ListView.builder(
             itemCount: products!.length,
-            itemBuilder: (context, i) => _createItemProduct(
-                products[i], context), //Se envia una instancia de ProductModel
+            itemBuilder: (context, i) => _createItemProduct(products[i],
+                context, productsBloc), //Se envia una instancia de ProductModel
           );
         } else {
           return Center(
@@ -60,15 +60,14 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget _createItemProduct(ProductModel product, BuildContext context) {
+  Widget _createItemProduct(
+      ProductModel product, BuildContext context, ProductsBloc productsBloc) {
     return Dismissible(
         key: UniqueKey(),
         background: Container(
           color: Colors.red,
         ),
-        onDismissed: (direction) {
-          productoProvider.deleteProducts(product.id);
-        },
+        onDismissed: (direction) => productsBloc.deleteProduct(product.id),
         child: Card(
           child: Column(
             children: [

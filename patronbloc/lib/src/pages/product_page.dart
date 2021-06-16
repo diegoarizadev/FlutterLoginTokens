@@ -1,8 +1,10 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:patronbloc/src/bloc/products_bloc.dart';
+import 'package:patronbloc/src/bloc/provider.dart';
 import 'package:patronbloc/src/models/product_model.dart';
-import 'package:patronbloc/src/providers/productos_provider.dart';
+//import 'package:patronbloc/src/providers/productos_provider.dart';
 import 'package:patronbloc/src/utils/utils.dart' as utils;
 import 'package:image_picker/image_picker.dart';
 
@@ -16,12 +18,15 @@ class ProductPage extends StatefulWidget {
 class _ProductPageState extends State<ProductPage> {
   final formKey = GlobalKey<FormState>();
   ProductModel product = new ProductModel();
-  final productProvider = new ProductsProvider();
+  //final productProvider = new ProductsProvider();
+  late ProductsBloc productsBloc;
   final scaffoldKey = GlobalKey<ScaffoldState>();
   bool _save = false;
   File photo = File(''); //Inicialización.
   @override
   Widget build(BuildContext context) {
+    productsBloc = ProviderInheritedWidget.productBloc(
+        context); //productsBloc es una propiedad de clase inicializada desde cualquier logar de la App.
     final prodData =
         ModalRoute.of(context)!.settings.arguments; //se captura el argumento.
 
@@ -136,15 +141,16 @@ class _ProductPageState extends State<ProductPage> {
     });
 
     if (photo != null) {
-      product.fotoUrl =
-          await productProvider.upLoadImagen(photo); //Cargar imagen en la nube
+      product.fotoUrl = await productsBloc.loadPhoto(
+          photo); //productProvider.upLoadImagen(photo); //Cargar imagen en la nube
     }
 
     if (product.id.isEmpty) {
-      productProvider.createProduct(product);
+      productsBloc
+          .addProduct(product); //productProvider.createProduct(product);
       seeSnackbar('Registro guardado 😃');
     } else {
-      productProvider.editProduct(product);
+      productsBloc.editProduct(product); //productProvider.editProduct(product);
       seeSnackbar('Registro actualizado 👍🏻');
     }
 
